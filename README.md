@@ -31,7 +31,6 @@ years now, but I have yet to see a version of Chrome that does.
 
 This is left for future development. This should work in principle,
 as long as one can obtain a text file that has fragments of hieroglyphic as substrings.
-For future development.
 
 ## Instructions
 
