@@ -31,6 +31,7 @@ years now, but I have yet to see a version of Chrome that does.
 
 This is left for future development. This should work in principle,
 as long as one can obtain a text file that has fragments of hieroglyphic as substrings.
+The most suitable format seems "Flat XML ODF".
 
 ## Instructions
 
@@ -80,6 +81,15 @@ To use a custom font, say `MyFont.ttf`, rather than the default font, do:
 create_font -f MyFont -o OutFont file1 file2 ...
 ```
 
+By adding the `-c` flag, one ensures that the created font includes every
+hieroglyph. In this way, each fragment of hieroglyphic encoding in every document 
+is visible if viewed with that font, even though some groups may not be properly formatted.
+For example:
+
+```
+create_font -o OutFont -c file1 file2 ...
+```
+
 ### Creating images
 
 An image can be created from a fragment by:
@@ -106,7 +116,7 @@ provided files:
 analyze_font
 analyze_font -f NewGardinerSMP
 create_font -o tests/new tests/hieropage.html tests/hierotestsuite.html
-create_font -f NewGardinerSMP -o tests/new tests/hieropage.html tests/hierotestsuite.html
+create_font -f NewGardinerSMP -o tests/new -c tests/hierotestsuite.html
 create_image -o myimage.jpg "&#x1340d;&#x13431;&#x1340d;&#x13430;&#x1340d;"
 ```
 

@@ -13,7 +13,10 @@ from uni_dimensions import Dimensions
 # copying to target.
 SCRATCH = int('0xF0001', 0)
 
-FIRST = int('0xF0000', 0)
+FIRST_COMPOSITE = int('0xF0000', 0)
+
+FIRST_GLYPH = int('0x13000', 0)
+LAST_GLYPH = int('0x1342e', 0)
 
 CONTROLS = [int('0x13430', 0), int('0x13431', 0), int('0x13432', 0), int('0x13433', 0), \
 	int('0x13434', 0), int('0x13435', 0), int('0x13436', 0), int('0x13437', 0), int('0x13438', 0)]
@@ -56,25 +59,34 @@ def insert_group(new, target, old, dim, string):
 	nglyph.width = (width_fragment(fragment, dim) + SEP) * em
 	nglyph.vwidth = (width_fragment(fragment, dim) + SEP) * em
 
-def create_for_strings(new_name, old_name, strings):
+def create_for_strings(new_name, old_name, strings, complement):
 	old = fontforge.open(old_name + '.ttf')
 	dim = Dimensions(old_name)
 	new = make_font(old)
-	i = FIRST
+	i = FIRST_COMPOSITE
 	subs = []
 	for s in strings:
 		insert_group(new, i, old, dim, s)
 		glyph = new[i]
 		subs.append((s, i))
 		i += 1
-	name_sources(new, old, subs)
+	name_sources(new, old, subs, complement)
 	for c in CONTROLS:
 		name_char(new, old, c)
 	new.generate(new_name + '.ttf')
 	return subs
 
-def name_sources(new, old, subs):
+def safe_chr(i):
+    try:
+        return chr(i)
+    except ValueError:
+        return unichr(i)
+
+def name_sources(new, old, subs, complement):
 	sources = set([ord(source) for (sources, _) in subs for source in sources])
+	if complement:
+		for i in range(FIRST_GLYPH, LAST_GLYPH+1):
+			sources.add(i)
 	for source in sources:
 		name_char(new, old, source)
 
@@ -83,6 +95,8 @@ def name_char(new, old, i):
 	old.copy()
 	new.selection.select(i)
 	new.pasteInto()
+	new[i].width = old[i].width
+	new[i].vwidth = old[i].width
 
 def create_source(s):
 	nums = [ord(c) for c in s]
@@ -112,13 +126,13 @@ def create_features(new_name, subs):
 		f.write('} liga;\n')
 	f.close()
 
-def create_for_files(new_name, old_name, fs):
+def create_for_files(new_name, old_name, fs, complement):
 	strings = extract_unique_group_strings(fs)
-	subs = create_for_strings(new_name, old_name, strings)
+	subs = create_for_strings(new_name, old_name, strings, complement)
 	create_features(new_name, subs)
 
 def usage():
-	print('create_font [-f <infont>] -o <outfont> <infiles>')
+	print('create_font [-f <infont>] -o <outfont> [-c] <infiles>')
 	print('<infont>: .ttf file')
 	print('<outfont>: .otf file')
 	print('<infiles>: .txt or .html files')
@@ -126,12 +140,13 @@ def usage():
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, 'hf:o:', [])
+		opts, args = getopt.getopt(argv, 'hf:o:c', [])
 	except getopt.GetoptError:
 		usage()
 	d = os.path.dirname(os.path.realpath(sys.argv[0]))
 	f = d + '/fonts/NewGardinerSMP'
 	out = None
+	complement = False
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -139,11 +154,13 @@ def main(argv):
 			f = d + '/fonts/' + arg
 		elif opt == '-o':
 			out = arg
+		elif opt == '-c':
+			complement = True
 	if not out:
 		usage()
 	f = os.path.splitext(f)[0] 
 	out = os.path.splitext(out)[0] 
-	create_for_files(out, f, args)
+	create_for_files(out, f, args, complement)
 	os.system('makeotf -f ' + out + '.ttf -ff ' + out + '.fea -o ' + out + '.otf')
 
 if __name__ == '__main__':
