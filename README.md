@@ -167,5 +167,5 @@ pip3 install -U afdko
 ```
 
 On your platform, python2 and python3 may be called differently. If so, edit
-`analyze_font` and `create_font` appropriately.
+`analyze_font`, `create_font` and `create_image` appropriately.
 
