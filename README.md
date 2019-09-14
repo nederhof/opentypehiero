@@ -29,7 +29,9 @@ years now, but I have yet to see a version of Chrome that does.
 
 ### LibreOffice and Word
 
-This has not been tested yet, but it should work in principle.
+This is left for future development. This should work in principle,
+as long as one can obtain a text file that has fragments of hieroglyphic as substrings.
+For future development.
 
 ## Instructions
 
@@ -155,6 +157,6 @@ pip install -U Pillow
 pip3 install -U afdko
 ```
 
-On your platform, python2 and python3 may be called differently. Edit
+On your platform, python2 and python3 may be called differently. If so, edit
 `analyze_font` and `create_font` appropriately.
 
