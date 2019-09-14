@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DIR=$(dirname "$(readlink -f "$BASH_SOURCE")")
+
+# Python 2 implementation
+PY2=python
+
+$PY2 $DIR/uni_create.py $*
+	
+
+
