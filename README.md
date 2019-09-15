@@ -108,6 +108,9 @@ A number of example input files are provided in directory:
 tests/
 ```
 
+This includes an OpenType font that was generated with the tools presented
+here. Two HTML files can be viewed with a browser.
+
 The following are examples of what can be run from the command-line with the
 provided files:
 
