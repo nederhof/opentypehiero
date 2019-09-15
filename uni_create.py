@@ -100,7 +100,7 @@ def name_char(new, old, i):
 
 def create_source(s):
 	nums = [ord(c) for c in s]
-	return 'u{:05X}'.format(nums[0]) + " " + ''.join(['u{:05X} '.format(i) for i in nums[1:]])
+	return 'u{:05X}'.format(nums[0]) + " " + ' '.join(['u{:05X}'.format(i) for i in nums[1:]]) + ' '
 
 def create_substitution(f, sub):
 	(sources, target) = sub
@@ -110,9 +110,12 @@ def create_features(new_name, subs):
 	f = open(new_name + '.fea', 'w')
 	subs0 = [(s,t) for (s,t) in subs if len(s) > 1]
 	subs1 = [(s,t) for (s,t) in subs if len(s) == 1]
+	ligatures = [t for (s,t) in subs if len(s) > 1]
 	f.write('languagesystem DFLT dflt;\n')
 	if len(subs0) + len(subs1) > 0:
 		f.write('feature liga {\n')
+		f.write('\tscript DFLT;\n')
+		f.write('\tlanguage dflt;\n')
 		if len(subs0) > 0:
 			f.write('lookup liga0 {\n')
 			for sub in subs0:

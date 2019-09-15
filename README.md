@@ -23,9 +23,8 @@ One can create one or more webpages that include fragments of Ancient Egyptian, 
 to select a font for these fragments. By running a script on these webpages,
 the required font is created.
 
-It should be pointed out that few browsers as yet offer support for the kinds of OpenType 
-*liga* features that the created fonts use. Firefox has offered such support for many
-years now, but I have yet to see a version of Chrome that does.
+At this time, not all browsers may realize the kinds of OpenType *liga* features 
+that the created fonts use. 
 
 ### LibreOffice and Word
 
