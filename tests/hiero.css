@@ -4,14 +4,12 @@
 }
 
 span.myfont {
-	/*
     -webkit-font-feature-settings: "liga";
     -moz-font-feature-settings: "liga=1";
     -moz-font-feature-settings: "liga";
     -ms-font-feature-settings: "liga" 1;
     -o-font-feature-settings: "liga";
-	*/
-    font-feature-settings: "liga", "clig";
+    font-feature-settings: "liga";
 	color:  blue;
 	font-size: 200%;
     font-family: 'Hieroglyphic';
