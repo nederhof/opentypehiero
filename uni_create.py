@@ -2,7 +2,7 @@
 
 import fontforge
 import psMat
-import os, sys, getopt
+import os, sys
 
 from uni_syntax import parser
 from uni_format import SEP, format_fragment, width_fragment, width_top
@@ -133,38 +133,3 @@ def create_for_files(new_name, old_name, fs, complement):
 	strings = extract_unique_group_strings(fs)
 	subs = create_for_strings(new_name, old_name, strings, complement)
 	create_features(new_name, subs)
-
-def usage():
-	print('create_font [-f <infont>] -o <outfont> [-c] <infiles>')
-	print('<infont>: .ttf file')
-	print('<outfont>: .otf file')
-	print('<infiles>: .txt or .html files')
-	sys.exit(2)
-
-def main(argv):
-	try:
-		opts, args = getopt.getopt(argv, 'hf:o:c', [])
-	except getopt.GetoptError:
-		usage()
-	d = os.path.dirname(os.path.realpath(sys.argv[0]))
-	f = d + '/fonts/NewGardinerSMP'
-	out = None
-	complement = False
-	for opt, arg in opts:
-		if opt == '-h':
-			usage()
-		elif opt == '-f':
-			f = d + '/fonts/' + arg
-		elif opt == '-o':
-			out = arg
-		elif opt == '-c':
-			complement = True
-	if not out:
-		usage()
-	f = os.path.splitext(f)[0] 
-	out = os.path.splitext(out)[0] 
-	create_for_files(out, f, args, complement)
-	os.system('makeotf -f ' + out + '.ttf -ff ' + out + '.fea -o ' + out + '.otf')
-
-if __name__ == '__main__':
-	main(sys.argv[1:])

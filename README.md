@@ -32,7 +32,46 @@ This is left for future development. This should work in principle,
 as long as one can obtain a text file that has fragments of hieroglyphic as substrings.
 The most suitable format seems "Flat XML ODF".
 
-## Instructions
+## Installation
+
+These instructions assume Linux.
+
+### FontForge
+
+FontForge is used to create composite glyphs. On Debian-based Linux it is installed by:
+
+```
+apt-get install fontforge
+apt-get install python-fontforge
+```
+
+On Fedora, it would reportedly just be:
+
+```
+yum install fontforge
+```
+
+### Python and AFDKO
+
+It should be possible to run this code with just Python3.
+On some distributions however, FontForge is not yet available for Python3, in
+which case Python2 should be used to run `create_font`.
+
+The Python scrips call `makeotf` from the command-line, which is part of AFDKO.
+
+Assuming Python and pip are already installed,
+then commands to install the necessary Python packages would typically be:
+
+```
+pip install -U ply
+pip install -U Pillow
+pip install -U afdko
+```
+
+On your platform, python2 and python3 may be called differently. If so, edit
+the first line of `analyze_font`, `create_font` and `create_image` appropriately.
+
+## Running
 
 ### Adding a new font
 
@@ -99,6 +138,8 @@ create_image -f MyFont -s fontsize -o MyImage MyHieroglyphicEncoding
 
 If omitted, the default font is `NewGardinerSMP.ttf`.
 If omitted, the default fontsize is 20. 
+The hieroglyphic encoding may contain HTML entities for hieroglyphs and
+control characters, which are replaced by characters.
 
 ### Examples
 
@@ -136,38 +177,4 @@ or
 ```
 
 This creates a font `new.otf` in the `tests/` directory.
-
-## Installation
-
-These instructions assume Linux.
-
-### FontForge
-
-FontForge is used to create composite glyphs. It is installed by:
-
-```
-apt-get install fontforge
-apt-get install python-fontforge
-```
-
-### Python and AFDKO
-
-At present both Python3 (for `analyze_font`) and Python2 (for `create_font`)
-are required. 
-The reason Python2 is still used is because Python3 is less easy to use
-with the standard install of FontForge.
-
-The Python scrips call `makeotf` from the command-line, which is part of AFDKO.
-
-Assuming Python2 and Python3, and pip and pip3, are already installed,
-then commands to install the necessary Python packages would typically be:
-
-```
-pip install -U ply
-pip install -U Pillow
-pip3 install -U afdko
-```
-
-On your platform, python2 and python3 may be called differently. If so, edit
-`analyze_font`, `create_font` and `create_image` appropriately.
 

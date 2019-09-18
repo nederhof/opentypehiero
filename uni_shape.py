@@ -4,10 +4,8 @@ from fontTools.ttLib import TTFont
 from PIL import Image, ImageFont, ImageDraw
 import json
 import math
-import os, sys, getopt
 
 from uni_format import MARGIN
-# from uni_shape_testing import *
 from uni_signs import *
 
 resolution = 100
@@ -212,27 +210,3 @@ def analyse(f):
 		json.dump(sizes, f)
 	except FileNotFoundError:
 		print(shape_file + ' not found')
-
-def usage():
-	print('analyze_font [-f <infont>]')
-	print('<infont>: .ttf file')
-	sys.exit(2)
-
-def main(argv):
-	try:
-		opts, args = getopt.getopt(argv, 'hf:', [])
-	except getopt.GetoptError:
-		usage()
-	d = os.path.dirname(os.path.realpath(sys.argv[0]))
-	f = d + '/fonts/NewGardinerSMP'
-	for opt, arg in opts:
-		if opt == '-h':
-			usage()
-		elif opt == '-f':
-			f = d + '/fonts/' + arg
-	f = os.path.splitext(f)[0]
-	make_fonts(f)
-	analyse(f)
-
-if __name__ == '__main__':
-	main(sys.argv[1:])

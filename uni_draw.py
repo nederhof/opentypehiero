@@ -1,7 +1,7 @@
 # Tested with Python2 and Python3
 
 import math
-import os, sys, getopt
+import sys
 from PIL import Image, ImageFont, ImageDraw
 
 from escapes import html
@@ -86,38 +86,3 @@ def safe_chr(i):
 		return chr(i)
 	except ValueError:
 		return unichr(i)
-
-def usage():
-	print('create_image [-f <infont>] [-s <fontsize>] -o <outfile> hieroglyphic')
-	print('<infont>: .ttf file')
-	print('<outfile>: .jpg/.png//.bmp/.tif file')
-	print('hieroglyphic: Unicode string')
-	sys.exit(2)
-
-def main(argv):
-	try:
-		opts, args = getopt.getopt(argv, 'hf:s:o:', [])
-	except getopt.GetoptError:
-		usage()
-	d = os.path.dirname(os.path.realpath(sys.argv[0]))
-	f = d + '/fonts/NewGardinerSMP'
-	s = 20
-	out = None
-	for opt, arg in opts:
-		if opt == '-h':
-			usage()
-		elif opt == '-f':
-			f = d + '/fonts/' + arg
-		elif opt == '-s':
-			s = int(arg)
-		elif opt == '-o':
-			out = arg
-	if not out:
-		usage()
-	if len(args) != 1:
-		usage()
-	f = os.path.splitext(f)[0]
-	create_image(out, f, s, args[0])
-
-if __name__ == '__main__':
-	main(sys.argv[1:])
