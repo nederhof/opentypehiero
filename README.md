@@ -57,7 +57,7 @@ It should be possible to run this code with just Python3.
 On some distributions however, FontForge is not yet available for Python3, in
 which case Python2 should be used to run `create_font`.
 
-The Python scrips call `makeotf` from the command-line, which is part of AFDKO.
+The Python scripts call `makeotf` from the command-line, which is part of AFDKO.
 
 Assuming Python and pip are already installed,
 then commands to install the necessary Python packages would typically be:
