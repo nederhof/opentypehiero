@@ -11,7 +11,7 @@ from uni_dimensions import Dimensions
 
 # Holding temporary result of scaling and positioning, before
 # copying to target.
-SCRATCH = int('0xF0001', 0)
+SCRATCH = int('0xFFFFD', 0)
 
 FIRST_COMPOSITE = int('0xF0000', 0)
 
@@ -65,12 +65,16 @@ def create_for_strings(new_name, old_name, strings, complement):
 	new = make_font(old)
 	i = FIRST_COMPOSITE
 	subs = []
-	for s in strings:
-		insert_group(new, i, old, dim, s)
-		glyph = new[i]
-		subs.append((s, i))
-		i += 1
-	name_sources(new, old, subs, complement)
+	closure = close(strings, complement)
+	for s in closure:
+		codepoints = [ord(sub) for sub in s]
+		if len(codepoints) == 1:
+			p = codepoints[0] 
+			insert_group(new, p, old, dim, s)
+		else:
+			insert_group(new, i, old, dim, s)
+			subs.append((s, i))
+			i += 1
 	for c in CONTROLS:
 		name_char(new, old, c)
 	new.generate(new_name + '.ttf')
@@ -82,13 +86,23 @@ def safe_chr(i):
     except ValueError:
         return unichr(i)
 
-def name_sources(new, old, subs, complement):
-	sources = set([ord(source) for (sources, _) in subs for source in sources])
+def close(strings, complement):
 	if complement:
-		for i in range(FIRST_GLYPH, LAST_GLYPH+1):
-			sources.add(i)
-	for source in sources:
-		name_char(new, old, source)
+		ps = range(FIRST_GLYPH, LAST_GLYPH+1)
+	else:
+		ps = set()
+		for s in strings:
+			for c in s:
+				p = ord(c)
+				if FIRST_GLYPH <= p and p <= LAST_GLYPH:
+					ps.add(p)
+	longer = []
+	for s in strings:
+		if (len(s) > 1):
+			longer.append(s)
+	cs = [safe_chr(p) for p in ps]
+	cs.extend(longer)
+	return cs
 
 def name_char(new, old, i):
 	old.selection.select(i)
@@ -108,24 +122,18 @@ def create_substitution(f, sub):
 
 def create_features(new_name, subs):
 	f = open(new_name + '.fea', 'w')
-	subs0 = [(s,t) for (s,t) in subs if len(s) > 1]
-	subs1 = [(s,t) for (s,t) in subs if len(s) == 1]
+	subs_mult = [(s,t) for (s,t) in subs if len(s) > 1]
 	ligatures = [t for (s,t) in subs if len(s) > 1]
 	f.write('languagesystem DFLT dflt;\n')
-	if len(subs0) + len(subs1) > 0:
+	if len(subs_mult) > 0:
 		f.write('feature liga {\n')
 		f.write('\tscript DFLT;\n')
 		f.write('\tlanguage dflt;\n')
-		if len(subs0) > 0:
+		if len(subs_mult) > 0:
 			f.write('lookup liga0 {\n')
-			for sub in subs0:
+			for sub in subs_mult:
 				create_substitution(f, sub)
 			f.write('} liga0;\n')
-		if len(subs1) > 0:
-			f.write('lookup liga1 {\n')
-			for sub in subs1:
-				create_substitution(f, sub)
-			f.write('} liga1;\n')
 		f.write('} liga;\n')
 	f.close()
 
