@@ -7,6 +7,7 @@ import os, sys
 from uni_syntax import parser
 from uni_format import SEP, format_fragment, width_fragment, width_top
 from uni_extract import extract_unique_group_strings
+from uni_custom import extract_custom_groups
 from uni_dimensions import Dimensions
 
 # Holding temporary result of scaling and positioning, before
@@ -59,26 +60,38 @@ def insert_group(new, target, old, dim, string):
 	nglyph.width = (width_fragment(fragment, dim) + SEP) * em
 	nglyph.vwidth = (width_fragment(fragment, dim) + SEP) * em
 
-def create_for_strings(new_name, old_name, strings, complement):
+def first_len(pair):
+	(first, second) = pair
+	return len(first)
+
+def create_for_strings(new_name, old_name, strings, custom_mappings, complement):
 	old = fontforge.open(old_name + '.ttf')
 	dim = Dimensions(old_name)
 	new = make_font(old)
 	i = FIRST_COMPOSITE
-	subs = []
+	subs_custom_mapping = {}
+	subs_texts = []
 	closure = close(strings, complement)
+	for m in custom_mappings:
+		(source, target) = m
+		codepoints = [ord(sub) for sub in source]
+		insert_group(new, i, old, dim, target)
+		subs_custom_mapping[source] = i
+		i += 1
 	for s in closure:
 		codepoints = [ord(sub) for sub in s]
 		if len(codepoints) == 1:
 			p = codepoints[0] 
 			insert_group(new, p, old, dim, s)
-		else:
+		elif s not in subs_custom_mapping:
 			insert_group(new, i, old, dim, s)
-			subs.append((s, i))
+			subs_texts.append((s,i))
 			i += 1
 	for c in CONTROLS:
 		name_char(new, old, c)
 	new.generate(new_name + '.ttf')
-	return subs
+	subs_custom = sorted(subs_custom_mapping.items(), key=first_len, reverse=True)
+	return subs_custom + subs_texts
 
 def safe_chr(i):
     try:
@@ -114,7 +127,8 @@ def name_char(new, old, i):
 
 def create_source(s):
 	nums = [ord(c) for c in s]
-	return 'u{:05X}'.format(nums[0]) + " " + ' '.join(['u{:05X}'.format(i) for i in nums[1:]]) + ' '
+	return 'u{:05X}'.format(nums[0]) + " " + ' '.join(['u{:05X}'.format(i) for i in nums[1:]]) + \
+			' ' if len(nums) > 0 else ''
 
 def create_substitution(f, sub):
 	(sources, target) = sub
@@ -123,7 +137,6 @@ def create_substitution(f, sub):
 def create_features(new_name, subs):
 	f = open(new_name + '.fea', 'w')
 	subs_mult = [(s,t) for (s,t) in subs if len(s) > 1]
-	ligatures = [t for (s,t) in subs if len(s) > 1]
 	f.write('languagesystem DFLT dflt;\n')
 	if len(subs_mult) > 0:
 		f.write('feature liga {\n')
@@ -137,7 +150,8 @@ def create_features(new_name, subs):
 		f.write('} liga;\n')
 	f.close()
 
-def create_for_files(new_name, old_name, fs, complement):
+def create_for_files(new_name, old_name, fs, custom_file, complement):
 	strings = extract_unique_group_strings(fs)
-	subs = create_for_strings(new_name, old_name, strings, complement)
+	custom_mappings = extract_custom_groups(custom_file)
+	subs = create_for_strings(new_name, old_name, strings, custom_mappings, complement)
 	create_features(new_name, subs)

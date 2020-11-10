@@ -128,6 +128,24 @@ For example:
 create_font -o OutFont -c file1 file2 ...
 ```
 
+### Adding custom groups
+
+To interpret control characters in a non-standard way, one can
+compile a list of custom groups in a plain text file. Each line in that file consists of
+a source sequence of characters (two or more), a space or tab, 
+and a target sequence of characters (one or more) composed using control characters.
+The characters in both sequences may be written as HTML entities.
+
+A file of custom groups is preceded by the `-g` flag:
+
+```
+create_font -g CustomGroups -o OutFont file1 file2 ...
+```
+
+The source sequences need not contain control characters. In this way, a
+webpage containing sequences of hieroglyphs without control characters 
+can be rendered as if it had control characters.
+
 ### Creating images
 
 An image can be created from a fragment by:
@@ -178,3 +196,8 @@ or
 
 This creates a font `new.otf` in the `tests/` directory.
 
+An example with custom groups:
+
+```
+../create_font -g customgroups.txt -o new customgroups.html
+```
