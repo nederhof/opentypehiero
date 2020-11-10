@@ -148,8 +148,10 @@ a webpage containing bare sequences of hieroglyphs can be rendered as
 if it had control characters.
 
 It is important to realize that a custom group may not lead to the desired
-result if it is a subgroup of a larger group in one of the input files;
+result if it is a subgroup of a larger group with control characters in one of the input files;
 i.e. the target sequence will not be recognized as part of the larger group.
+A more typical use would therefore be with the `-c` flag and without input
+files `file1 file 2 ...`.
 
 ### Creating images
 
