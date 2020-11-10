@@ -60,16 +60,13 @@ def insert_group(new, target, old, dim, string):
 	nglyph.width = (width_fragment(fragment, dim) + SEP) * em
 	nglyph.vwidth = (width_fragment(fragment, dim) + SEP) * em
 
-def first_len(pair):
-	(first, second) = pair
-	return len(first)
-
 def create_for_strings(new_name, old_name, strings, custom_mappings, complement):
 	old = fontforge.open(old_name + '.ttf')
 	dim = Dimensions(old_name)
 	new = make_font(old)
 	i = FIRST_COMPOSITE
 	subs_custom_mapping = {}
+	subs_custom = []
 	subs_texts = []
 	closure = close(strings, complement)
 	for m in custom_mappings:
@@ -77,6 +74,7 @@ def create_for_strings(new_name, old_name, strings, custom_mappings, complement)
 		codepoints = [ord(sub) for sub in source]
 		insert_group(new, i, old, dim, target)
 		subs_custom_mapping[source] = i
+		subs_custom.append((source,i))
 		i += 1
 	for s in closure:
 		codepoints = [ord(sub) for sub in s]
@@ -90,7 +88,6 @@ def create_for_strings(new_name, old_name, strings, custom_mappings, complement)
 	for c in CONTROLS:
 		name_char(new, old, c)
 	new.generate(new_name + '.ttf')
-	subs_custom = sorted(subs_custom_mapping.items(), key=first_len, reverse=True)
 	return subs_custom + subs_texts
 
 def safe_chr(i):
