@@ -142,9 +142,10 @@ A file of custom groups is preceded by the `-g` flag:
 create_font -g CustomGroups -o OutFont file1 file2 ...
 ```
 
-The source sequences need not contain control characters. In this way, a
-webpage containing sequences of hieroglyphs without control characters 
-can be rendered as if it had control characters.
+The source sequences need not contain control characters. By mapping them to
+target sequences with control characters,
+a webpage containing bare sequences of hieroglyphs can be rendered as 
+if it had control characters.
 
 ### Creating images
 
