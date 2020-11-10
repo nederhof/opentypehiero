@@ -70,6 +70,18 @@ int('0x13316', 0), int('0x1332C', 0), int('0x13341', 0),
 int('0x13345', 0), int('0x13374', 0), int('0x133CE', 0),
 }
 
+# Glyphs for which insert should not extend the half-cirle.
+st_shallow = {
+}
+sb_shallow = {
+}
+et_shallow = {
+# "G43","G43a","G44"
+int('0x13171', 0), int('0x13172', 0), int('0x13173', 0)
+}
+eb_shallow = {
+}
+
 suppress_margin = {
 	int('0x13193', 0)
 }

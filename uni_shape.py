@@ -162,37 +162,60 @@ def glyph_shapes(code):
 	w1 = w0 + 2*margin
 	if code in st_lower:
 		center, r = image_s(im1, 2*resolution - round(0.8*h), w1, h)
-		r = adjust_radius(r)
-		st = [-margin/w0, (r-margin)/w0, ((center-r) - (2*resolution-h))/h, \
-				((center+r) - (2*resolution-h))/h]
+		r_st = adjust_radius_st(r, code)
+		st = [-margin/w0, (r_st-margin)/w0, ((center-r_st) - (2*resolution-h))/h, \
+				((center+r_st) - (2*resolution-h))/h]
 	else:
 		r = image_st(im1, 0, 2*resolution-h, w1, h)
-		r = adjust_radius(r)
-		st = [-margin/w0, (r-margin)/w0, 0, r/h]
+		r_st = adjust_radius_st(r, code)
+		st = [-margin/w0, (r_st-margin)/w0, 0, r_st/h]
 	if code in sb_raise:
 		center, r = image_s(im1, 2*resolution-1 - round(0.2*h), w1, h)
-		r = adjust_radius(r)
-		sb = [-margin/w0, (r-margin)/w0, ((center-r) - (2*resolution-h))/h, \
-				((center+r) - (2*resolution-h))/h]
+		r_sb = adjust_radius_sb(r, code)
+		sb = [-margin/w0, (r_sb-margin)/w0, ((center-r_sb) - (2*resolution-h))/h, \
+				((center+r_sb) - (2*resolution-h))/h]
 	else:
 		r = image_sb(im1, 0, 2*resolution-1, w1, h)
-		r = adjust_radius(r)
-		sb = [-margin/w0, (r-margin)/w0, (h-r)/h, 1]
+		r_sb = adjust_radius_sb(r, code)
+		sb = [-margin/w0, (r_sb-margin)/w0, (h-r_sb)/h, 1]
 	r = image_et(im1, w1-1, 2*resolution-h, w1, h)
-	r = adjust_radius(r)
-	et = [(w0+margin-r)/w0, (w0+margin)/w0, 0, r/h]
+	r_et = adjust_radius_et(r, code)
+	et = [(w0+margin-r_et)/w0, (w0+margin)/w0, 0, r_et/h]
 	r = image_eb(im1, w1-1, 2*resolution-1, w1, h)
-	r = adjust_radius(r)
-	eb = [(w0+margin-r)/w0, (w0+margin)/w0, (h-r)/h, 1]
+	r_eb = adjust_radius_eb(r, code)
+	eb = [(w0+margin-r_eb)/w0, (w0+margin)/w0, (h-r_eb)/h, 1]
 	return [w0/resolution, h/resolution, \
 		truncate(st), truncate(sb), truncate(et), truncate(eb)]
-def adjust_radius(r):
-	if r > 0.6 * resolution:
+
+def adjust_radius_st(r, code):
+	if code in st_shallow or r > 0.6 * resolution:
 		return r - 0.1 * resolution
 	elif r > 0.2 * resolution:
 		return r - 0.05 * resolution
 	else:
 		return r
+def adjust_radius_sb(r, code):
+	if code in sb_shallow or r > 0.6 * resolution:
+		return r - 0.1 * resolution
+	elif r > 0.2 * resolution:
+		return r - 0.05 * resolution
+	else:
+		return r
+def adjust_radius_et(r, code):
+	if code in et_shallow or r > 0.6 * resolution:
+		return r - 0.1 * resolution
+	elif r > 0.2 * resolution:
+		return r - 0.05 * resolution
+	else:
+		return r
+def adjust_radius_eb(r, code):
+	if code in eb_shallow or r > 0.6 * resolution:
+		return r - 0.1 * resolution
+	elif r > 0.2 * resolution:
+		return r - 0.05 * resolution
+	else:
+		return r
+
 def truncate(l):
 	return [round(v * 10000) / 10000 for v in l]
 	
