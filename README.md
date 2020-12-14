@@ -12,6 +12,8 @@ The reason why a stable set of documents is a requirement is that the font
 will not be able to handle anything that does not occur in the given documents. 
 For every added fragment, the font needs to be recreated.
 
+See also [L2/19-331](https://www.unicode.org/L2/L2019/19331-egyptian-opentype.pdf).
+
 For frequently changing documents that include hieroglyphic text consider the
 [alternative in pure JavaScript](https://github.com/nederhof/resjs).
 
