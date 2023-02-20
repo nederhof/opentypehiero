@@ -2,8 +2,10 @@
 
 try:
     # python 2
+    # html.escape from HTMLParser
     from HTMLParser import HTMLParser
+    html = HTMLParser()
 except ImportError:
     # python 3
-    from html.parser import HTMLParser
-html = HTMLParser()
+    # html.escape directly available
+    import html
